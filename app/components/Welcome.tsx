@@ -1,19 +1,29 @@
+import { useState } from "react";
 import { AiFillPlayCircle } from "react-icons/ai"
 import { SiEthereum } from "react-icons/si"
 import { BsInfoCircle } from "react-icons/bs"
 import { Loader } from "./"
 
 export default function Welcome() {
+  const [formData, setFormData] = useState({
+    addressTo: "",
+    amount: "",
+    keyword: "",
+    message: ""
+  });
+  const [isLoading, setIsLoading] = useState(false);
+
   const commonStyles = 'min-h-[70px] px-4 sm:min-w-[120px] flex justify-center items-center border border-white/10 text-white text-sm backdrop-blur-sm bg-white/5'
+  
   interface InputProps {
     placeholder: string;
     name: string;
     type?: string;
-    value:string;
+    value: string;
     handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   }
   
-  const Input = ({ placeholder, name, type = "text",value, handleChange }: InputProps) => {
+  const Input = ({ placeholder, name, type = "text", value, handleChange }: InputProps) => {
     return (
       <input 
         placeholder={placeholder}
@@ -32,13 +42,21 @@ export default function Welcome() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // TODO: Handle input changes
-    console.log(e.target.name, e.target.value);
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   }
 
-  const handleSubmit = ()=>{
-
+  const handleSubmit = () => {
+    const { addressTo, amount, keyword, message } = formData;
+    
+    if (!addressTo || !amount || !keyword || !message) {
+      alert("Please fill all fields");
+      return;
+    }
+    
+    // TODO: Send transaction
+    console.log("Sending transaction:", formData);
   }
+
   return (
     <div className="flex w-full justify-center items-center">
       <div className="flex md:flex-row flex-col items-start justify-between md:p-20 py-12 px-4">
@@ -47,7 +65,7 @@ export default function Welcome() {
             Send Crypto <br /> across the world
           </h1>
           <p className="text-left mt-5 text-white font-light md:w-9/12 w-11/12">
-            Explore the crypto world. Buy and Sell cryptocurrencies easily on Krypto!
+            Explore the crypto world. Buy and Sell cryptocurrencies easily on Quantum Exchange!
           </p>
           <button 
             className="flex flex-row justify-center items-center my-5 bg-[#2952e3] p-3 rounded-full cursor-pointer hover:bg-[#2546bd] text-white text-base font-semibold" 
@@ -66,7 +84,7 @@ export default function Welcome() {
           </div>
         </div>
 
-        <div className="flex flex-col flex-1 items-center justify-start w-full mf:mt-0 mt-10">
+        <div className="flex flex-col flex-1 items-center justify-start w-full md:mt-0 mt-10">
           <div className="p-3 flex justify-end items-start flex-col rounded-xl h-40 sm:w-72 w-full my-5 eth-card white-glassmorphism">
             <div className="flex justify-between flex-col w-full h-full">
               <div className="flex justify-between items-start">
@@ -83,23 +101,24 @@ export default function Welcome() {
           </div>
           
           <div className="p-2 sm:w-96 w-full flex flex-col justify-start items-center blue-glassmorphism">
-            <Input placeholder="Address To" name="addressTo" handleChange={handleChange} value=""/>
-            <Input placeholder="Amount (ETH)" name="amount" type="number" handleChange={handleChange}value="" />
-            <Input placeholder="Keyword (Gif)" name="keyword" handleChange={handleChange} value=""/>
-            <Input placeholder="Enter Message" name="message" handleChange={handleChange} value=""/>
-            <div className="h-[px] w-full bg-gray-400 my-2"/>
-              {!true?(
-                <Loader />
-              ):(
-                <button
-  type="button" 
-  className="text-white w-full mt-2 border border-[#727b92] p-2 rounded-full cursor-pointer hover:border-[#2952e3] hover:bg-[#2952e3]/10 transition-all" 
-  onClick={handleSubmit}
->
-  Send Now
-</button>
-              )}
+            <Input placeholder="Address To" name="addressTo" handleChange={handleChange} value={formData.addressTo} />
+            <Input placeholder="Amount (ETH)" name="amount" type="number" handleChange={handleChange} value={formData.amount} />
+            <Input placeholder="Keyword (Gif)" name="keyword" handleChange={handleChange} value={formData.keyword} />
+            <Input placeholder="Enter Message" name="message" handleChange={handleChange} value={formData.message} />
             
+            <div className="h-[1px] w-full bg-gray-400 my-2" />
+            
+            {isLoading ? (
+              <Loader />
+            ) : (
+              <button
+                type="button" 
+                className="text-white w-full mt-2 border border-[#727b92] p-2 rounded-full cursor-pointer hover:border-[#2952e3] hover:bg-[#2952e3]/10 transition-all" 
+                onClick={handleSubmit}
+              >
+                Send Now
+              </button>
+            )}
           </div>
         </div>
       </div>
